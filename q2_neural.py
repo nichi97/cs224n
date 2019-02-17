@@ -45,27 +45,39 @@ def forward_backward_prop(X, labels, params, dimensions):
     b2 = np.reshape(params[ofs:ofs + Dy], (1, Dy))
 
     # Note: compute cost based on `sum` not `mean`.
-    ### YOUR CODE HERE: forward propagation
-    z2 = np.matmul(X, W1) + b1
-    h2 = sigmoid(z2)
-    z3 = np.matmul(h2, W2) + b2
-    h3 = sigmoid(z3)
-    y_hat = softmax(h3) 
+    ## YOUR CODE HERE: forward propagation
+    z1 = np.matmul(X, W1) + b1
+    h = sigmoid(z1)
+    z2 = np.matmul(h, W2) + b2
+    y_hat = softmax(z2)
     y = labels
-    cost = -np.sum(y * np.log(y_hat)) 
-    ### END YOUR CODE
+    # what is wrong with my cost function?
+    cost = -np.sum(y * np.log(y_hat)) / X.shape[0]
+    #cost = np.sum(-np.log(y_hat[labels==1])) / X.shape[0]
+    #### END YOUR CODE
 
     ### YOUR CODE HERE: backward propagation
-    delta1 = y_hat - labels
-    s3 = sigmoid(z3)
-    delta2 = delta1 * sigmoid_grad(s3)
-    delta3 = np.matmul(delta2, W2.T)
-    s2 = sigmoid(z2)
-    delta4 = delta3 * sigmoid_grad(s2)
-    gradW1 = np.matmul(X.T, delta4)
-    gradb1 = np.sum(delta4, axis = 0)
-    gradW2 = np.matmul(h2.T, delta2)
-    gradb2 = np.sum(delta2, axis = 0)
+    #delta1 = y_hat - labels
+    #s2 = sigmoid(z2)
+    # delta2 = delta1 * sigmoid_grad(s2)
+    # delta3 = np.matmul(delta2, W2.T)
+    # s1 = sigmoid(z1)
+    # delta4 = delta3 * sigmoid_grad(s1)
+    # gradW1 = np.matmul(X.T, delta4)
+    # gradb1 = np.sum(delta4, axis = 0)
+    # gradW2 = np.matmul(h2.T, delta2)
+    # gradb2 = np.sum(delta2, axis = 0)
+
+    # why do we need to divide by X.shape?
+    delta1 = (y_hat - labels) / X.shape[0]
+    delta2 = np.matmul(delta1, W2.T)
+    delta3 = delta2 * sigmoid_grad(h)
+    gradW2 = np.matmul(h.T, delta1)
+    gradb2 = np.sum(delta1, axis = 0)
+    gradW1 = np.matmul(X.T, delta3)
+    gradb1 = np.sum(delta3, axis = 0)
+
+
     ### END YOUR CODE
 
     ### Stack gradients (do not modify)
@@ -81,7 +93,6 @@ def sanity_check():
     gradcheck.
     """
     print("Running sanity check...")
-
     N = 20
     dimensions = [10, 5, 10]
     data = np.random.randn(N, dimensions[0])   # each row will be a datum
