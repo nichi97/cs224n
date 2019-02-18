@@ -52,24 +52,12 @@ def forward_backward_prop(X, labels, params, dimensions):
     y_hat = softmax(z2)
     y = labels
     # what is wrong with my cost function?
-    cost = -np.sum(y * np.log(y_hat)) / X.shape[0]
-    #cost = np.sum(-np.log(y_hat[labels==1])) / X.shape[0]
+    cost = -np.sum(y * np.log(y_hat))
     #### END YOUR CODE
 
     ### YOUR CODE HERE: backward propagation
-    #delta1 = y_hat - labels
-    #s2 = sigmoid(z2)
-    # delta2 = delta1 * sigmoid_grad(s2)
-    # delta3 = np.matmul(delta2, W2.T)
-    # s1 = sigmoid(z1)
-    # delta4 = delta3 * sigmoid_grad(s1)
-    # gradW1 = np.matmul(X.T, delta4)
-    # gradb1 = np.sum(delta4, axis = 0)
-    # gradW2 = np.matmul(h2.T, delta2)
-    # gradb2 = np.sum(delta2, axis = 0)
-
-    # why do we need to divide by X.shape?
-    delta1 = (y_hat - labels) / X.shape[0]
+   # why do we need to divide by X.shape?
+    delta1 = (y_hat - labels)
     delta2 = np.matmul(delta1, W2.T)
     delta3 = delta2 * sigmoid_grad(h)
     gradW2 = np.matmul(h.T, delta1)
